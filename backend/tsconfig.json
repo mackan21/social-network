@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // Version
+    "module": "commonjs", // För Node.js
+    "rootDir": "./src", // Här ligger TypeScript-koden
+    "outDir": "./dist", // Här hamnar den kompilerade JS-koden
+    "esModuleInterop": true, // Gör att vi kan importera paket som 'express'
+    "strict": true, // Gör TypeScript-strikt
+    "forceConsistentCasingInFileNames": true, // Undviker fel på t.ex. Linux
+    "skipLibCheck": true // Snabbar upp kompilering lite
+  }
+}
