@@ -38,32 +38,42 @@ const RegisterForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Registrera dig</h2>
+    <form onSubmit={handleSubmit} className="login-form">
+      <h2 className="form-title">Registrera dig</h2>
+      <div className="form-group">
+        <label className="form-label">Användarnamn</label>
+        <input
+          type="text"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          className="form-input"
+        />
+      </div>
+      <div className="form-group">
+        <label className="form-label">Email</label>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          className="form-input"
+        />
+      </div>
+      <div className="form-group">
+        <label className="form-label">Lösenord</label>
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          className="form-input"
+        />
+      </div>
 
-      <input
-        type="text"
-        name="username"
-        placeholder="Användarnamn"
-        value={formData.username}
-        onChange={handleChange}
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="E-post"
-        value={formData.email}
-        onChange={handleChange}
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Lösenord"
-        value={formData.password}
-        onChange={handleChange}
-      />
-
-      <button type="submit">Registrera</button>
+      <button className="form-button" type="submit">
+        Registrera
+      </button>
       {message && <p>{message}</p>}
     </form>
   );
