@@ -37,4 +37,36 @@ router.post("/register", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+router.post("/login", async (req: Request, res: Response): Promise<void> => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    res.status(400).json({ error: "Alla fält måste fyllas i" });
+    return;
+  }
+
+  try {
+    const user = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
+
+    if (user.rows.length === 0) {
+      res.status(401).json({ error: "Fel e-post eller lösenord" });
+      return;
+    }
+
+    const validPassword = await bcrypt.compare(password, user.rows[0].password);
+
+    if (!validPassword) {
+      res.status(401).json({ error: "Fel e-post eller lösenord" });
+      return;
+    }
+
+    res.status(200).json({ message: "Inloggning lyckades!" });
+  } catch (err) {
+    console.error("Fel vid inloggning:", err);
+    res.status(500).json({ error: "Något gick fel på servern" });
+  }
+});
+
 export default router;
