@@ -1,14 +1,17 @@
-// src/pages/LoginPage.tsx
+import "./LoginPage.css";
 import LoginForm from "../components/LoginForm";
 import { Link } from "react-router-dom";
 
 const LoginPage = () => {
   return (
     <div>
-      <h1>Logga in</h1>
+      <h1>Logo</h1>
       <LoginForm />
-      <p>
-        Har du inget konto? <Link to="/register">Registrera dig här</Link>
+      <p className="link-text">
+        Har du inget konto?{" "}
+        <Link to="/register" className="link">
+          Registrera dig här
+        </Link>
       </p>
     </div>
   );
