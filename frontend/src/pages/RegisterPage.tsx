@@ -4,12 +4,12 @@ import { Link } from "react-router-dom";
 const RegisterPage = () => {
   return (
     <div>
-      <h1>Logo</h1>
+      <h1 className="logo">Yap</h1>
       <RegisterForm />
       <p className="link-text">
-        Har du redan ett konto?{" "}
+        Already have an account?{" "}
         <Link className="link" to="/">
-          Logga in här
+          Sign in
         </Link>
       </p>
     </div>

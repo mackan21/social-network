@@ -24,19 +24,19 @@ const LoginForm = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Inloggningen misslyckades");
+        setError(data.error || "Login failed");
       } else {
-        setMessage("Inloggning lyckades!");
+        setMessage("Login successful!");
       }
     } catch (err) {
-      setError("Något gick fel vid inloggning");
+      setError("Something went wrong while logging in.");
       console.error(err);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="login-form">
-      <h2 className="form-title">Logga in</h2>
+      <h2 className="form-title">Sign in to Yap</h2>
 
       {error && <p className="error-message">{error}</p>}
 
@@ -52,7 +52,7 @@ const LoginForm = () => {
       </div>
 
       <div className="form-group">
-        <label className="form-label">Lösenord</label>
+        <label className="form-label">Password</label>
         <input
           type="password"
           value={password}
@@ -63,7 +63,7 @@ const LoginForm = () => {
       </div>
 
       <button type="submit" className="form-button">
-        Logga in
+        Sign in
       </button>
     </form>
   );

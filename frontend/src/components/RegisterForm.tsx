@@ -26,22 +26,24 @@ const RegisterForm = () => {
 
       const data = await res.json();
       setMessage(
-        res.ok ? "Registreringen lyckades!" : data.error || "Något gick fel"
+        res.ok
+          ? "Registration successful!"
+          : data.error || "Something went wrong"
       );
       if (res.ok) {
         setFormData({ username: "", email: "", password: "" });
       }
     } catch (err) {
       console.error("Fel:", err);
-      setMessage("Kunde inte kontakta servern");
+      setMessage("Could not contact the server.");
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="login-form">
-      <h2 className="form-title">Registrera dig</h2>
+      <h2 className="form-title">Sign up to Yap</h2>
       <div className="form-group">
-        <label className="form-label">Användarnamn</label>
+        <label className="form-label">Username</label>
         <input
           type="text"
           name="username"
@@ -61,7 +63,7 @@ const RegisterForm = () => {
         />
       </div>
       <div className="form-group">
-        <label className="form-label">Lösenord</label>
+        <label className="form-label">Password</label>
         <input
           type="password"
           name="password"
@@ -72,7 +74,7 @@ const RegisterForm = () => {
       </div>
 
       <button className="form-button" type="submit">
-        Registrera
+        Register
       </button>
       {message && <p>{message}</p>}
     </form>
