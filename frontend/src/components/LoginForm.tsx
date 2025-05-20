@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import "./LoginForm.css";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +30,11 @@ const LoginForm = () => {
         setError(data.error || "Login failed");
       } else {
         setMessage("Login successful!");
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        navigate("/feed");
       }
     } catch (err) {
       setError("Something went wrong while logging in.");
