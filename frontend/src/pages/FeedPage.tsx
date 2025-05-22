@@ -70,7 +70,7 @@ const FeedPage = () => {
   return (
     <div className="feed-page">
       <header className="header">
-        <h1 className="feed-logo">Yap</h1>
+        <h1 className="nav-logo">Yap</h1>
       </header>
       <main>
         <div className="feed-group">
@@ -108,7 +108,7 @@ const FeedPage = () => {
           <div className="feed-section">
             <h3 className="following">Following</h3>
             {posts.length === 0 ? (
-              <p>Inga inlägg att visa ännu.</p>
+              <p>No posts to display yet.</p>
             ) : (
               posts.map((post) => (
                 <div className="post-wrapper">

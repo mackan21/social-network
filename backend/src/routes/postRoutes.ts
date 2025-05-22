@@ -70,4 +70,33 @@ router.get("/feed", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+router.get("/my-posts", async (req: Request, res: Response): Promise<void> => {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    res.status(401).json({ error: "No token found" });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
+
+    const result = await pool.query(
+      `
+      SELECT posts.id, posts.content, posts.created_at, users.username
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      WHERE users.id = $1
+      ORDER BY posts.created_at DESC
+      `,
+      [decoded.userId]
+    );
+
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error("Error fetching user's posts:", err);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
 export default router;

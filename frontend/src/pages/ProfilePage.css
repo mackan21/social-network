@@ -1,0 +1,32 @@
+.profile-page {
+  display: flex;
+}
+
+.profile-section {
+  border: 1px solid #6bc785;
+  border-top: none;
+  color: white;
+  padding-left: 1rem;
+  padding-top: 1rem;
+}
+
+.created-at {
+  margin-top: 1rem;
+}
+
+.follower-following-count {
+  display: flex;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.followers-count {
+  margin-left: 1rem;
+}
+
+.my-posts {
+  color: white;
+  text-align: center;
+  padding-top: 1rem;
+  margin-bottom: 1rem;
+}

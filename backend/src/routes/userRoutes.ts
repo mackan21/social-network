@@ -87,4 +87,43 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+router.get("/me", async (req: Request, res: Response): Promise<void> => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    res.status(401).json({ error: "No token provided" });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
+    const userId = decoded.userId;
+
+    const userResult = await pool.query(
+      `SELECT id, username, created_at FROM users WHERE id = $1`,
+      [userId]
+    );
+
+    const followerCountResult = await pool.query(
+      `SELECT COUNT(*) FROM follows WHERE followed_id = $1`,
+      [userId]
+    );
+
+    const followingCountResult = await pool.query(
+      `SELECT COUNT(*) FROM follows WHERE follower_id = $1`,
+      [userId]
+    );
+
+    res.status(200).json({
+      id: userResult.rows[0].id,
+      username: userResult.rows[0].username,
+      createdAt: userResult.rows[0].created_at,
+      followers: parseInt(followerCountResult.rows[0].count),
+      following: parseInt(followingCountResult.rows[0].count),
+    });
+  } catch (err) {
+    console.error("Error getting user info", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 export default router;
