@@ -114,3 +114,17 @@
 .content {
   margin-top: 0.5rem;
 }
+
+.welcome-text {
+  color: white;
+  text-align: center;
+  font-size: 2rem;
+  margin-top: 1rem;
+}
+
+.welcome-text-2 {
+  color: white;
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}

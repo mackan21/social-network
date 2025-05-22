@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./FeedPage.css";
+import Navbar from "../components/Navbar";
 
 type Post = {
   id: number;
@@ -69,9 +70,7 @@ const FeedPage = () => {
 
   return (
     <div className="feed-page">
-      <header className="header">
-        <h1 className="nav-logo">Yap</h1>
-      </header>
+      <Navbar />
       <main>
         <div className="feed-group">
           <div className="start">
@@ -106,15 +105,21 @@ const FeedPage = () => {
           {error && <p style={{ color: "red" }}>{error}</p>}
 
           <div className="feed-section">
-            <h3 className="following">Following</h3>
+            <h4 className="following">Following</h4>
             {posts.length === 0 ? (
-              <p>No posts to display yet.</p>
+              <div className="welcome-group">
+                <p className="welcome-text">Welcome to Yap!</p>
+                <p className="welcome-text-2">
+                  Start by following some poeple you know or that you like and
+                  their posts will show up here in your feed.
+                </p>
+              </div>
             ) : (
               posts.map((post) => (
-                <div className="post-wrapper">
+                <div className="post-wrapper" key={post.id}>
                   <div className="post-profile"></div>
                   <div className="post">
-                    <div className="username-date" key={post.id}>
+                    <div className="username-date">
                       <p className="username">
                         <strong>{post.username}</strong>
                       </p>

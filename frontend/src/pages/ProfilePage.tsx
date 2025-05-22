@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./ProfilePage.css";
+import Navbar from "../components/Navbar";
 
 type Post = {
   id: number;
@@ -75,9 +76,7 @@ const ProfilePage = () => {
 
   return (
     <div className="feed-page">
-      <header className="header">
-        <h1 className="nav-logo">Yap</h1>
-      </header>
+      <Navbar />
       <main>
         <div className="profile-section">
           {userInfo ? (
