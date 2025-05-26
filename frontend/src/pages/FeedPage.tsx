@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./FeedPage.css";
 import Navbar from "../components/Navbar";
+import SearchBar from "../components/SearchBar";
 
 type Post = {
   id: number;
@@ -121,7 +122,7 @@ const FeedPage = () => {
                   <div className="post">
                     <div className="username-date">
                       <p className="username">
-                        <strong>{post.username}</strong>
+                        <strong>@{post.username}</strong>
                       </p>
                       <p className="date">
                         {new Date(post.created_at).toLocaleString()}
@@ -137,6 +138,9 @@ const FeedPage = () => {
           </div>
         </div>
       </main>
+      <div className="search-section">
+        <SearchBar />
+      </div>
     </div>
   );
 };

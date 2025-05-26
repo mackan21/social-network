@@ -107,8 +107,14 @@
   margin-top: 1rem;
 }
 
+.username {
+  font-size: 1.2rem;
+}
+
 .date {
-  margin-left: 1rem;
+  margin-left: 20rem;
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
 }
 
 .content {
@@ -127,4 +133,9 @@
   text-align: center;
   margin-top: 1rem;
   margin-bottom: 1rem;
+}
+
+/* Serach section */
+.search-section {
+  margin-left: 2rem;
 }

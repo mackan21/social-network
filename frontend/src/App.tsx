@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import FeedPage from "./pages/FeedPage";
 import ProfilePage from "./pages/ProfilePage";
+import UserProfilePage from "./pages/UserProfilePage";
 import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
@@ -24,6 +25,14 @@ function App() {
         element={
           <PrivateRoute>
             <ProfilePage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/users/:username"
+        element={
+          <PrivateRoute>
+            <UserProfilePage />
           </PrivateRoute>
         }
       />

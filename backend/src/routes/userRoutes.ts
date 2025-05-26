@@ -126,4 +126,93 @@ router.get("/me", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+router.get("/search", async (req: Request, res: Response): Promise<void> => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    res.status(401).json({ error: "No token provided" });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
+    const userId = decoded.userId;
+
+    const query = req.query.query as string;
+
+    if (!query) {
+      res.status(400).json({ error: "Missing search query" });
+      return;
+    }
+
+    const results = await pool.query(
+      "SELECT id, username FROM users WHERE username ILIKE $1 AND id != $2 LIMIT 10",
+      [`%${query}%`, userId]
+    );
+
+    res.status(200).json(results.rows);
+  } catch (err) {
+    console.error("Error during user search:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.get("/:username", async (req: Request, res: Response): Promise<void> => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    res.status(401).json({ error: "No token provided" });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
+
+    const { username } = req.params;
+
+    const userResult = await pool.query(
+      `SELECT id, username, created_at FROM users WHERE username = $1`,
+      [username]
+    );
+
+    if (userResult.rows.length === 0) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const user = userResult.rows[0];
+
+    const followerCountResult = await pool.query(
+      `SELECT COUNT(*) FROM follows WHERE followed_id = $1`,
+      [user.id]
+    );
+
+    const followingCountResult = await pool.query(
+      `SELECT COUNT(*) FROM follows WHERE follower_id = $1`,
+      [user.id]
+    );
+
+    const postsResult = await pool.query(
+      `SELECT posts.id, posts.content, posts.created_at, users.username
+   FROM posts
+   JOIN users ON posts.user_id = users.id
+   WHERE posts.user_id = $1
+   ORDER BY posts.created_at DESC`,
+      [user.id]
+    );
+
+    res.status(200).json({
+      user: {
+        id: user.id,
+        username: user.username,
+        createdAt: user.created_at,
+        followers: parseInt(followerCountResult.rows[0].count),
+        following: parseInt(followingCountResult.rows[0].count),
+      },
+      posts: postsResult.rows,
+    });
+  } catch (err) {
+    console.error("Error fetching user profile:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 export default router;

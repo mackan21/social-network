@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import "./ProfilePage.css";
 import Navbar from "../components/Navbar";
 
@@ -17,62 +18,39 @@ type UserProfile = {
   following: number;
 };
 
-const ProfilePage = () => {
+const UserProfilePage = () => {
+  const { username } = useParams();
   const [posts, setPosts] = useState<Post[]>([]);
   const [userInfo, setUserInfo] = useState<UserProfile | null>(null);
   const [error, setError] = useState("");
 
-  const fetchMyPosts = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-      const res = await fetch("http://localhost:3000/api/posts/my-posts", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Something went wrong");
-      } else {
-        setPosts(data);
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Could not retrieve your posts.");
-    }
-  };
-
-  const fetchMyInfo = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-      const res = await fetch("http://localhost:3000/api/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setUserInfo(data);
-      } else {
-        console.error(data.error);
-      }
-    } catch (err) {
-      console.error("Could not retrieve user data:", err);
-    }
-  };
-
   useEffect(() => {
-    fetchMyPosts();
-    fetchMyInfo();
-  }, []);
+    const token = localStorage.getItem("token");
+    if (!token || !username) return;
+
+    const fetchUserInfo = async () => {
+      try {
+        const res = await fetch(`http://localhost:3000/api/users/${username}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          setUserInfo(data.user);
+          setPosts(data.posts);
+        } else {
+          setError(data.error || "Något gick fel");
+        }
+      } catch (err) {
+        console.error("Fel vid hämtning av profil:", err);
+        setError("Serverfel");
+      }
+    };
+
+    fetchUserInfo();
+  }, [username]);
 
   return (
     <div className="feed-page">
@@ -99,18 +77,16 @@ const ProfilePage = () => {
               </div>
             </>
           ) : (
-            <p>Loading user information...</p>
+            <p>Laddar användare...</p>
           )}
         </div>
 
         <div className="feed-group">
-          <h3 className="my-posts">My posts</h3>
-
+          <h3 className="my-posts">Posts</h3>
           {error && <p style={{ color: "red" }}>{error}</p>}
-
           <div className="feed-section">
             {posts.length === 0 ? (
-              <p>You haven't made any posts yet.</p>
+              <p>Inga inlägg ännu.</p>
             ) : (
               posts.map((post) => (
                 <div className="post-wrapper" key={post.id}>
@@ -138,4 +114,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default UserProfilePage;
