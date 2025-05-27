@@ -165,7 +165,7 @@ router.get("/:username", async (req: Request, res: Response): Promise<void> => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
-
+    const loggedInUserId = decoded.userId;
     const { username } = req.params;
 
     const userResult = await pool.query(
@@ -192,12 +192,19 @@ router.get("/:username", async (req: Request, res: Response): Promise<void> => {
 
     const postsResult = await pool.query(
       `SELECT posts.id, posts.content, posts.created_at, users.username
-   FROM posts
-   JOIN users ON posts.user_id = users.id
-   WHERE posts.user_id = $1
-   ORDER BY posts.created_at DESC`,
+       FROM posts
+       JOIN users ON posts.user_id = users.id
+       WHERE posts.user_id = $1
+       ORDER BY posts.created_at DESC`,
       [user.id]
     );
+
+    const isFollowingResult = await pool.query(
+      `SELECT * FROM follows WHERE follower_id = $1 AND followed_id = $2`,
+      [loggedInUserId, user.id]
+    );
+
+    const isFollowing = isFollowingResult.rows.length > 0;
 
     res.status(200).json({
       user: {
@@ -206,6 +213,7 @@ router.get("/:username", async (req: Request, res: Response): Promise<void> => {
         createdAt: user.created_at,
         followers: parseInt(followerCountResult.rows[0].count),
         following: parseInt(followingCountResult.rows[0].count),
+        isFollowing,
       },
       posts: postsResult.rows,
     });
@@ -214,5 +222,88 @@ router.get("/:username", async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+router.post(
+  "/:username/follow",
+  async (req: Request, res: Response): Promise<void> => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      res.status(401).json({ error: "No token provided" });
+      return;
+    }
+
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
+      const followerId = decoded.userId;
+      const { username } = req.params;
+
+      const userResult = await pool.query(
+        "SELECT id FROM users WHERE username = $1",
+        [username]
+      );
+
+      if (userResult.rows.length === 0) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+
+      const followedId = userResult.rows[0].id;
+
+      if (followerId === followedId) {
+        res.status(400).json({ error: "You cannot follow yourself" });
+        return;
+      }
+
+      await pool.query(
+        "INSERT INTO follows (follower_id, followed_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
+        [followerId, followedId]
+      );
+
+      res.status(200).json({ message: "Now following user" });
+    } catch (err) {
+      console.error("Error following user:", err);
+      res.status(500).json({ error: "Server error" });
+    }
+  }
+);
+
+router.delete(
+  "/:username/unfollow",
+  async (req: Request, res: Response): Promise<void> => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      res.status(401).json({ error: "No token provided" });
+      return;
+    }
+
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
+      const followerId = decoded.userId;
+      const { username } = req.params;
+
+      const userResult = await pool.query(
+        "SELECT id FROM users WHERE username = $1",
+        [username]
+      );
+
+      if (userResult.rows.length === 0) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+
+      const followedId = userResult.rows[0].id;
+
+      await pool.query(
+        "DELETE FROM follows WHERE follower_id = $1 AND followed_id = $2",
+        [followerId, followedId]
+      );
+
+      res.status(200).json({ message: "Unfollowed user" });
+    } catch (err) {
+      console.error("Error unfollowing user:", err);
+      res.status(500).json({ error: "Server error" });
+    }
+  }
+);
 
 export default router;

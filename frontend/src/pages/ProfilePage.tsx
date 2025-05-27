@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./ProfilePage.css";
 import Navbar from "../components/Navbar";
+import SearchBar from "../components/SearchBar";
 
 type Post = {
   id: number;
@@ -81,21 +82,23 @@ const ProfilePage = () => {
         <div className="profile-section">
           {userInfo ? (
             <>
-              <h3>{userInfo.username}</h3>
-              <p className="created-at">
-                Joined{" "}
-                {new Date(userInfo.createdAt).toLocaleString("default", {
-                  month: "long",
-                  year: "numeric",
-                })}
-              </p>
-              <div className="follower-following-count">
-                <p className="following-count">
-                  {userInfo.following} Following
+              <div>
+                <h3>{userInfo.username}</h3>
+                <p className="created-at">
+                  Joined{" "}
+                  {new Date(userInfo.createdAt).toLocaleString("default", {
+                    month: "long",
+                    year: "numeric",
+                  })}
                 </p>
-                <p className="followers-count">
-                  {userInfo.followers} Followers
-                </p>
+                <div className="follower-following-count">
+                  <p className="following-count">
+                    {userInfo.following} Following
+                  </p>
+                  <p className="followers-count">
+                    {userInfo.followers} Followers
+                  </p>
+                </div>
               </div>
             </>
           ) : (
@@ -134,6 +137,9 @@ const ProfilePage = () => {
           </div>
         </div>
       </main>
+      <div className="search-section">
+        <SearchBar />
+      </div>
     </div>
   );
 };

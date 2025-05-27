@@ -8,6 +8,15 @@
   color: white;
   padding-left: 1rem;
   padding-top: 1rem;
+  display: flex;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-actions {
+  flex-shrink: 0;
 }
 
 .created-at {
@@ -29,4 +38,21 @@
   text-align: center;
   padding-top: 1rem;
   margin-bottom: 1rem;
+}
+
+.follow-button {
+  height: 36px;
+  width: 81px;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  font-weight: bold;
+  background-color: #6bc785;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  white-space: nowrap;
+  margin-right: 1rem;
 }
