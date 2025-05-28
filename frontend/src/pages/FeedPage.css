@@ -136,6 +136,17 @@
   margin-bottom: 1rem;
 }
 
+.like-button {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+}
+
+.like-section {
+  margin-top: 1rem;
+}
+
 /* Serach section */
 .search-section {
   margin-left: 2rem;

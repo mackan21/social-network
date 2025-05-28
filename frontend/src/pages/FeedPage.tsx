@@ -2,12 +2,18 @@ import React, { useState, useEffect } from "react";
 import "./FeedPage.css";
 import Navbar from "../components/Navbar";
 import SearchBar from "../components/SearchBar";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart } from "@fortawesome/free-solid-svg-icons";
+
+const heartIcon = <FontAwesomeIcon icon={faHeart} />;
 
 type Post = {
   id: number;
   content: string;
   created_at: string;
   username: string;
+  like_count: number;
+  liked_by_me: boolean;
 };
 
 const FeedPage = () => {
@@ -16,8 +22,9 @@ const FeedPage = () => {
   const [error, setError] = useState("");
   const [posts, setPosts] = useState<Post[]>([]);
 
+  const token = localStorage.getItem("token");
+
   const fetchFeed = async () => {
-    const token = localStorage.getItem("token");
     if (!token) return;
 
     try {
@@ -34,18 +41,12 @@ const FeedPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchFeed();
-  }, []);
-
   const handlePostSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
     setError("");
 
     try {
-      const token = localStorage.getItem("token");
-
       const res = await fetch("http://localhost:3000/api/posts/create", {
         method: "POST",
         headers: {
@@ -68,6 +69,28 @@ const FeedPage = () => {
       setError("Error connecting to the server");
     }
   };
+
+  const toggleLike = async (postId: number, liked: boolean) => {
+    try {
+      const url = `http://localhost:3000/api/posts/like/${postId}`;
+      const method = liked ? "DELETE" : "POST";
+
+      await fetch(url, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      fetchFeed();
+    } catch (err) {
+      console.error("Error toggling like", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchFeed();
+  }, []);
 
   return (
     <div className="feed-page">
@@ -111,7 +134,7 @@ const FeedPage = () => {
               <div className="welcome-group">
                 <p className="welcome-text">Welcome to Yap!</p>
                 <p className="welcome-text-2">
-                  Start by following some poeple you know or that you like and
+                  Start by following some people you know or that you like and
                   their posts will show up here in your feed.
                 </p>
               </div>
@@ -130,6 +153,24 @@ const FeedPage = () => {
                     </div>
                     <div className="content">
                       <p>{post.content}</p>
+                    </div>
+                    <div className="like-section">
+                      <button
+                        className={`like-button ${
+                          post.liked_by_me ? "liked" : ""
+                        }`}
+                        onClick={() => toggleLike(post.id, post.liked_by_me)}
+                      >
+                        <FontAwesomeIcon
+                          icon={faHeart}
+                          className="heart-icon"
+                          style={{
+                            color: post.liked_by_me ? "red" : "white",
+                          }}
+                        />
+                      </button>
+
+                      <span className="like-count">{post.like_count}</span>
                     </div>
                   </div>
                 </div>
