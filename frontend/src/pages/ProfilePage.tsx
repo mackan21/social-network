@@ -113,7 +113,7 @@ const ProfilePage = () => {
 
           <div className="feed-section">
             {posts.length === 0 ? (
-              <p>You haven't made any posts yet.</p>
+              <p className="no-posts">You haven't made any posts yet.</p>
             ) : (
               posts.map((post) => (
                 <div className="post-wrapper" key={post.id}>

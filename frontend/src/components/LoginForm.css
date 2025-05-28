@@ -51,3 +51,8 @@
   border-color: #6bc785;
   outline: none;
 }
+
+.error-message {
+  color: white;
+  text-align: center;
+}

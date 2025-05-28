@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ const RegisterForm = () => {
   });
 
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,13 +27,14 @@ const RegisterForm = () => {
       });
 
       const data = await res.json();
-      setMessage(
-        res.ok
-          ? "Registration successful!"
-          : data.error || "Something went wrong"
-      );
+
       if (res.ok) {
-        setFormData({ username: "", email: "", password: "" });
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        navigate("/feed");
+      } else {
+        setMessage(data.error || "Something went wrong");
       }
     } catch (err) {
       console.error("Fel:", err);
@@ -76,7 +79,7 @@ const RegisterForm = () => {
       <button className="form-button" type="submit">
         Register
       </button>
-      {message && <p>{message}</p>}
+      {message && <p className="error-message">{message}</p>}
     </form>
   );
 };

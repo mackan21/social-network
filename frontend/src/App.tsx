@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import FeedPage from "./pages/FeedPage";
 import ProfilePage from "./pages/ProfilePage";
 import UserProfilePage from "./pages/UserProfilePage";
+import ExplorePage from "./pages/ExplorePage";
 import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
@@ -33,6 +34,14 @@ function App() {
         element={
           <PrivateRoute>
             <UserProfilePage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/explore"
+        element={
+          <PrivateRoute>
+            <ExplorePage />
           </PrivateRoute>
         }
       />

@@ -29,12 +29,26 @@ router.post("/register", async (req: Request, res: Response): Promise<void> => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await pool.query(
-      "INSERT INTO users (username, email, password) VALUES ($1, $2, $3)",
+    const insertResult = await pool.query(
+      "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username, email",
       [username, email, hashedPassword]
     );
 
-    res.status(201).json({ message: "User created!" });
+    const newUser = insertResult.rows[0];
+
+    const token = jwt.sign({ userId: newUser.id }, JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.status(201).json({
+      message: "User created and logged in!",
+      token: token,
+      user: {
+        id: newUser.id,
+        username: newUser.username,
+        email: newUser.email,
+      },
+    });
   } catch (err) {
     console.error("Fel vid registrering:", err);
     res.status(500).json({ error: "Something went wrong on the server." });
@@ -305,5 +319,39 @@ router.delete(
     }
   }
 );
+
+router.get("/all", async (req: Request, res: Response): Promise<void> => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    res.status(401).json({ error: "No token provided" });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
+    const userId = decoded.userId;
+
+    const allUsersResult = await pool.query(
+      `
+      SELECT 
+        users.id, 
+        users.username,
+        users.created_at,
+        EXISTS (
+          SELECT 1 FROM follows WHERE follower_id = $1 AND followed_id = users.id
+        ) AS is_following
+      FROM users
+      WHERE users.id != $1
+      ORDER BY users.username ASC
+      `,
+      [userId]
+    );
+
+    res.status(200).json(allUsersResult.rows);
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 export default router;

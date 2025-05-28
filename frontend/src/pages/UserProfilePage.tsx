@@ -150,7 +150,7 @@ const UserProfilePage = () => {
           {error && <p style={{ color: "red" }}>{error}</p>}
           <div className="feed-section">
             {posts.length === 0 ? (
-              <p>Inga inlägg ännu.</p>
+              <p className="no-posts">No posts yet</p>
             ) : (
               posts.map((post) => (
                 <div className="post-wrapper" key={post.id}>

@@ -1,11 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faHouse, faDoorOpen } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUser,
+  faHouse,
+  faDoorOpen,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
 
 const userIcon = <FontAwesomeIcon icon={faUser} />;
 const houseIcon = <FontAwesomeIcon icon={faHouse} />;
 const doorIcon = <FontAwesomeIcon icon={faDoorOpen} />;
+const searchIcon = <FontAwesomeIcon icon={faMagnifyingGlass} />;
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -24,6 +30,10 @@ const Navbar = () => {
         <button onClick={() => navigate("/feed")}>
           {houseIcon}
           <p className="nav-button-text">Home</p>
+        </button>
+        <button onClick={() => navigate("/explore")}>
+          {searchIcon}
+          <p className="nav-button-text nav-button-text-explore">Explore</p>
         </button>
         <button onClick={() => navigate("/profile")}>
           {userIcon}
