@@ -4,6 +4,7 @@ import cors from "cors";
 import userRoutes from "./routes/userRoutes";
 import postRoutes from "./routes/postRoutes";
 import testUserRoutes from "./routes/testUserRoutes";
+import commentRoutes from "./routes/commentRoutes";
 
 const app = express();
 const PORT = 3000;
@@ -15,6 +16,7 @@ app.use("/api", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/testusers", testUserRoutes);
+app.use("/api/comments", commentRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servern lyssnar på http://localhost:${PORT}`);

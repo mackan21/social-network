@@ -3,9 +3,7 @@ import "./FeedPage.css";
 import Navbar from "../components/Navbar";
 import SearchBar from "../components/SearchBar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
-
-const heartIcon = <FontAwesomeIcon icon={faHeart} />;
+import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 
 type Post = {
   id: number;
@@ -16,11 +14,25 @@ type Post = {
   liked_by_me: boolean;
 };
 
+type Comment = {
+  id: number;
+  content: string;
+  created_at: string;
+  username: string;
+};
+
 const FeedPage = () => {
   const [content, setContent] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [posts, setPosts] = useState<Post[]>([]);
+  const [openCommentsPostId, setOpenCommentsPostId] = useState<number | null>(
+    null
+  );
+  const [comments, setComments] = useState<Record<number, Comment[]>>({});
+  const [commentInputs, setCommentInputs] = useState<Record<number, string>>(
+    {}
+  );
 
   const token = localStorage.getItem("token");
 
@@ -38,6 +50,18 @@ const FeedPage = () => {
       setPosts(data);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const fetchComments = async (postId: number) => {
+    try {
+      const res = await fetch(
+        `http://localhost:3000/api/comments/post/${postId}`
+      );
+      const data = await res.json();
+      setComments((prev) => ({ ...prev, [postId]: data }));
+    } catch (err) {
+      console.error("Error fetching comments:", err);
     }
   };
 
@@ -85,6 +109,40 @@ const FeedPage = () => {
       fetchFeed();
     } catch (err) {
       console.error("Error toggling like", err);
+    }
+  };
+
+  const handleToggleComments = (postId: number) => {
+    const isOpen = openCommentsPostId === postId;
+    setOpenCommentsPostId(isOpen ? null : postId);
+
+    if (!isOpen) {
+      fetchComments(postId);
+    }
+  };
+
+  const handleCommentSubmit = async (postId: number, e: React.FormEvent) => {
+    e.preventDefault();
+
+    const content = commentInputs[postId];
+    if (!content) return;
+
+    try {
+      const res = await fetch("http://localhost:3000/api/comments/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ postId, content }),
+      });
+
+      if (res.ok) {
+        setCommentInputs((prev) => ({ ...prev, [postId]: "" }));
+        fetchComments(postId);
+      }
+    } catch (err) {
+      console.error("Error posting comment:", err);
     }
   };
 
@@ -154,24 +212,82 @@ const FeedPage = () => {
                     <div className="content">
                       <p>{post.content}</p>
                     </div>
-                    <div className="like-section">
-                      <button
-                        className={`like-button ${
-                          post.liked_by_me ? "liked" : ""
-                        }`}
-                        onClick={() => toggleLike(post.id, post.liked_by_me)}
-                      >
-                        <FontAwesomeIcon
-                          icon={faHeart}
-                          className="heart-icon"
-                          style={{
-                            color: post.liked_by_me ? "red" : "white",
-                          }}
-                        />
-                      </button>
-
-                      <span className="like-count">{post.like_count}</span>
+                    <div className="comment-like">
+                      <div className="like-section">
+                        <button
+                          className={`like-button ${
+                            post.liked_by_me ? "liked" : ""
+                          }`}
+                          onClick={() => toggleLike(post.id, post.liked_by_me)}
+                        >
+                          <FontAwesomeIcon
+                            icon={faHeart}
+                            className="heart-icon"
+                            style={{
+                              color: post.liked_by_me ? "red" : "white",
+                            }}
+                          />
+                        </button>
+                        <span className="like-count">{post.like_count}</span>
+                      </div>
+                      <div className="comment-section">
+                        <button
+                          className="comment-button"
+                          onClick={() => handleToggleComments(post.id)}
+                        >
+                          <FontAwesomeIcon
+                            icon={faComment}
+                            className="comment-icon"
+                          />
+                        </button>
+                        <span className="comment-count">
+                          {comments[post.id]?.length || 0}
+                        </span>
+                      </div>
                     </div>
+                    {openCommentsPostId === post.id && (
+                      <div className="comments-container">
+                        <div className="comment-list">
+                          {comments[post.id] ? (
+                            comments[post.id].map((comment) => (
+                              <div key={comment.id} className="comment">
+                                <p>
+                                  <strong>@{comment.username}</strong>{" "}
+                                  <p className="comment-text">
+                                    {comment.content}
+                                  </p>
+                                </p>
+                              </div>
+                            ))
+                          ) : (
+                            <p>Loading comments...</p>
+                          )}
+                        </div>
+                        <form
+                          onSubmit={(e) => handleCommentSubmit(post.id, e)}
+                          className="comment-form"
+                        >
+                          <input
+                            type="text"
+                            placeholder="Write a comment..."
+                            value={commentInputs[post.id] || ""}
+                            onChange={(e) =>
+                              setCommentInputs((prev) => ({
+                                ...prev,
+                                [post.id]: e.target.value,
+                              }))
+                            }
+                            required
+                          />
+                          <button
+                            className="post-button comment-post-button"
+                            type="submit"
+                          >
+                            Send
+                          </button>
+                        </form>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))

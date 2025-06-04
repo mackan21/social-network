@@ -65,7 +65,7 @@ const SearchBar = () => {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      {loading && <p>Loading...</p>}
+      {loading}
       {error && <p style={{ color: "red" }}>{error}</p>}
       {results.length > 0 && (
         <ul className="results-list">

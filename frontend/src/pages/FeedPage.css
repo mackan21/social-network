@@ -5,9 +5,22 @@
 
 .feed-page {
   display: flex;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* Post section */
+
+main {
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+main::-webkit-scrollbar {
+  display: none;
+}
+
 .feed-group {
   margin-top: 0;
   width: 600px;
@@ -143,11 +156,64 @@
   margin-right: 0.5rem;
 }
 
+.comment-button {
+  background: transparent;
+  color: white;
+  border: none;
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+}
+
+.comment-section {
+  margin-top: 1rem;
+  margin-left: 2rem;
+}
+
 .like-section {
   margin-top: 1rem;
+}
+
+.comment-like {
+  display: flex;
 }
 
 /* Serach section */
 .search-section {
   margin-left: 2rem;
+}
+
+/* Comment section */
+
+.comment-list {
+  margin-top: 1rem;
+}
+
+.comment-text {
+  margin-top: 0.5rem;
+}
+
+.comment-form {
+  margin-top: 1rem;
+}
+
+.comment {
+  margin-top: 1rem;
+  max-width: 90%;
+  word-wrap: break-word;
+}
+
+.comment-form input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 1rem;
+  border-top: #6bc785 1px solid;
+  width: 90%;
+  padding-top: 1rem;
+}
+
+.comment-post-button {
+  margin-top: 0.5rem;
+  margin-left: 26.5rem;
 }
