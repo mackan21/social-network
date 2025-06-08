@@ -22,7 +22,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar">
+    <nav className="navbar responsive-navbar">
       <h2 className="nav-logo" onClick={() => navigate("/feed")}>
         Yap
       </h2>

@@ -61,3 +61,10 @@
   color: white;
   text-align: center;
 }
+
+@media (max-width: 600px) {
+  .profile-section {
+    border-left: none;
+    border-right: none;
+  }
+}

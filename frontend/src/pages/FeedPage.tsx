@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./FeedPage.css";
 import Navbar from "../components/Navbar";
 import SearchBar from "../components/SearchBar";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 
@@ -35,6 +36,7 @@ const FeedPage = () => {
   );
 
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   const fetchFeed = async () => {
     if (!token) return;
@@ -202,9 +204,13 @@ const FeedPage = () => {
                   <div className="post-profile"></div>
                   <div className="post">
                     <div className="username-date">
-                      <p className="username">
+                      <p
+                        className="username"
+                        onClick={() => navigate(`/users/${post.username}`)}
+                      >
                         <strong>@{post.username}</strong>
                       </p>
+
                       <p className="date">
                         {new Date(post.created_at).toLocaleString()}
                       </p>

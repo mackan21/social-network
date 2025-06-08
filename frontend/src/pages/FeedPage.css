@@ -113,6 +113,8 @@ main::-webkit-scrollbar {
 .post {
   width: 540px;
   color: white;
+  max-width: 80%;
+  word-wrap: break-word;
 }
 
 .username-date {
@@ -122,11 +124,11 @@ main::-webkit-scrollbar {
 
 .username {
   font-size: 1.2rem;
-  width: 10rem;
+  cursor: pointer;
 }
 
 .date {
-  margin-left: 15rem;
+  margin-left: 1rem;
   font-size: 0.8rem;
   margin-top: 0.3rem;
 }
@@ -216,4 +218,22 @@ main::-webkit-scrollbar {
 .comment-post-button {
   margin-top: 0.5rem;
   margin-left: 26.5rem;
+}
+
+@media (max-width: 1180px) {
+  .search-section {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .feed-group {
+    width: 100%;
+    border-left: none;
+    border-right: none;
+  }
+  .post-wrapper {
+    border-left: none;
+    border-right: none;
+  }
 }
